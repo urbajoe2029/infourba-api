@@ -6,7 +6,7 @@ app = Flask(__name__)
 @app.route("/colaboradores")
 def get_colaboradores():
     try:
-        conn = psycopg2.connect("postgresql://SEU_USUARIO:SEU_TOKEN@ep-XXXXXX-pooler.us-east-2.aws.neon.tech/SEU_BANCO?sslmode=require")
+        conn = psycopg2.connect("postgresql://neondb_owner:npg_XU2VZajNP4oR@ep-weathered-sound-a5q0b2x5-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require")
         cur = conn.cursor()
         cur.execute("SELECT id, nome, setor FROM colaboradores")
         rows = cur.fetchall()
@@ -19,3 +19,8 @@ def get_colaboradores():
         ])
     except Exception as e:
         return jsonify({"erro": str(e)}), 500
+        
+if __name__ == "__main__":
+    from os import getenv
+    port = int(getenv("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
