@@ -1,26 +1,25 @@
-from flask import Flask, jsonify
 import psycopg2
+from flask import Flask
 
 app = Flask(__name__)
 
-@app.route("/colaboradores")
-def get_colaboradores():
+# Sua connection string
+DATABASE_URL = "postgresql://postgres:Urbajoe26?@db.tdyqpuprumdynezvieqy.supabase.co:5432/postgres"
+
+@app.route('/')
+def hello():
     try:
-        conn = psycopg2.connect("postgresql://neondb_owner:npg_XU2VZajNP4oR@ep-weathered-sound-a5q0b2x5-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require")
+        conn = psycopg2.connect(DATABASE_URL)
         cur = conn.cursor()
-        cur.execute("SELECT id, nome, setor FROM colaboradores")
-        rows = cur.fetchall()
+        cur.execute("SELECT NOW()")
+        result = cur.fetchone()
         cur.close()
         conn.close()
-
-        return jsonify([
-            {"id": r[0], "nome": r[1], "setor": r[2]}
-            for r in rows
-        ])
+        return f"Conexão com o banco deu certo! Data/hora: {result}"
     except Exception as e:
-        return jsonify({"erro": str(e)}), 500
-        
-if __name__ == "__main__":
-    from os import getenv
-    port = int(getenv("PORT", 5000))
+        return f"Erro: {e}"
+
+if __name__ == '__main__':
+    import os
+    port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
